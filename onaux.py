@@ -48,5 +48,10 @@ users_queue = sp.queue()
 currently_playing_track_or_episode = users_queue['currently_playing']
 print(f"Currently playing: {currently_playing_track_or_episode['name']}")
 
+# resume from here
+add_to_queue("0CsT3gRGhXrMRUBxwgMFNk",device_id=None)
+
+
 for track_or_episode in users_queue['queue']:
     print(f"Queued: {track_or_episode['name']}")
+
