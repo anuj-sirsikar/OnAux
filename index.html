@@ -5,7 +5,7 @@
     </head>
     
     <body>
-        <form id="submitSong" onsubmit="submit(this)">
+        <form id="submitSong">
             <input list="songs" name="song" id="song">
             <datalist id="songs">
                 <option value="test1">
@@ -16,15 +16,16 @@
                 <option value="song3">
                 <option value="heehee">
             </datalist>
-            <button type="submit">
+            <input type="submit">
         </form>
     </body>
 
     <script>
-        function submit(form){
+        const form = document.getElementById("submitSong");
+        form.addEventListener("submit", function(event){
+            event.preventDefault();
             var song = form.song.value;
-            console.log(song);
-            form.song.setAttribute('value', '');
-        }
+            form.song.value = "";
+        });
     </script>
 </html>
