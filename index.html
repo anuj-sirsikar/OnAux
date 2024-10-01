@@ -5,6 +5,26 @@
     </head>
     
     <body>
-        
+        <form id="submitSong" onsubmit="submit(this)">
+            <input list="songs" name="song" id="song">
+            <datalist id="songs">
+                <option value="test1">
+                <option value="helloworld">
+                <option value="highwayToHell">
+                <option value="song1">
+                <option value="song2">
+                <option value="song3">
+                <option value="heehee">
+            </datalist>
+            <button type="submit">
+        </form>
     </body>
+
+    <script>
+        function submit(form){
+            var song = form.song.value;
+            console.log(song);
+            form.song.setAttribute('value', '');
+        }
+    </script>
 </html>
