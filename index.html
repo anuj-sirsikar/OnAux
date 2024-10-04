@@ -2,22 +2,73 @@
     <head>
         <meta charset="UTF-8">
         <title>Class Jukebox</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo">
+        <style>
+            body {
+                background-color: #333333;
+                font-family: "Exo", sans-serif;
+            }
+            h1 {
+                font-size: 750%;
+                text-align: center;
+                color: white;
+                margin-top: 50px;
+            }
+            h2 {
+                text-align: center;
+                color: white;
+            }
+            ul {
+                color: white;
+                margin-left: 40%;
+            }
+            form {
+                margin-left: 30%;
+            }
+            div {
+                width: 40%;
+                border: 2px solid white;
+                border-radius: 10px;
+                background-color: #222222;
+            }
+            #left {
+                float: left;
+                margin-left: 5%;
+            }
+            #right {
+                float: right;
+                margin-right: 5%;
+            }
+        </style>
     </head>
     
     <body>
-        <form id="submitSong">
-            <input list="songs" name="song" id="song">
-            <datalist id="songs">
-                <option value="test1">
-                <option value="helloworld">
-                <option value="highwayToHell">
-                <option value="song1">
-                <option value="song2">
-                <option value="song3">
-                <option value="heehee">
-            </datalist>
-            <input type="submit">
-        </form>
+        <h1>Class Jukebox</h1>
+        <div id="left">
+            <h2>Add a song below!</h5>
+            <form id="submitSong">
+                <input list="songs" name="song" id="song">
+                <datalist id="songs">
+                    <option value="test1">
+                    <option value="helloworld">
+                    <option value="highwayToHell">
+                    <option value="song1">
+                    <option value="song2">
+                    <option value="song3">
+                    <option value="heehee">
+                </datalist>
+                <input type="submit" value="Add Song">
+            </form>
+        </div>
+        <div id="right">
+            <h2>Queue</h2>
+            <ul>
+                <li>Song 1</li>
+                <li>Song 2</li>
+                <li>Song 3</li>
+                <li>Song 4</li>
+            </ul>
+        </div>
     </body>
 
     <script>
@@ -26,6 +77,19 @@
             event.preventDefault();
             var song = form.song.value;
             form.song.value = "";
+            fetch("request", {
+                method: "POST",
+                body: song
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error('HTTP ERROR');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
         });
     </script>
 </html>
