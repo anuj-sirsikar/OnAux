@@ -17,8 +17,8 @@ async def root():
 songs = []
 
 @app.post("/request/")
-async def store_song(song: SongCreate):
-    return song
+async def store_song(song_name: SongCreate):
+    return {"song": "Anything"}
     # return {"message": f"Song '{song}' stored successfully", "total_songs": len(songs)}
 
 if __name__ == "__main__":

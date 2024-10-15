@@ -34,11 +34,11 @@ def test_request_endpoint():
     try:
         hostname = socket.gethostname()
         ip_address = socket.gethostbyname(hostname)
-        myobj = {'song': 'taco'}
+        myobj = {'song_name' : 'test'}
         response = requests.post("http://" + ip_address + ":8080/request/", json=myobj)
-        
         # The assert command throws an error if a False value is passed to it.
         # This is the command you will use to get your pytest work done.
+        print(response.text)
         assert response.status_code == 200
     finally:
         # Terminate the server process after the test
