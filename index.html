@@ -1,95 +1,156 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Class Jukebox</title>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo">
-        <style>
-            body {
-                background-color: #333333;
-                font-family: "Exo", sans-serif;
-            }
-            h1 {
-                font-size: 750%;
-                text-align: center;
-                color: white;
-                margin-top: 50px;
-            }
-            h2 {
-                text-align: center;
-                color: white;
-            }
-            ul {
-                color: white;
-                margin-left: 40%;
-            }
-            form {
-                margin-left: 30%;
-            }
-            div {
-                width: 40%;
-                border: 2px solid white;
-                border-radius: 10px;
-                background-color: #222222;
-            }
-            #left {
-                float: left;
-                margin-left: 5%;
-            }
-            #right {
-                float: right;
-                margin-right: 5%;
-            }
-        </style>
-    </head>
-    
-    <body>
-        <h1>Class Jukebox</h1>
-        <div id="left">
-            <h2>Add a song below!</h5>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Class Jukebox</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo">
+    <style>
+        body {
+            background-color: #333333;
+            font-family: "Exo", sans-serif;
+        }
+
+        h1 {
+            font-size: 750%;
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+        }
+
+        ul {
+            color: white;
+            padding: 0;
+        }
+
+        li {
+            margin: 1% 2.5%;
+            padding: 1% 2.5%;
+            background-color: #111111;
+            list-style-type: none;
+            width: auto;
+            border: 2px solid white;
+            border-radius: 5px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        #song {
+            height: 2.5%;
+            width: 70%;
+            padding: 1%;
+            border-radius: 5px;
+            border: 0px;
+            font-family: "Exo", sans-serif;
+        }
+
+        #submit {
+            height: 2.5%;
+            width: 15%;
+            background-color: #78FFB7;
+            border-radius: 5px;
+            border: 0px;
+            font-family: "Exo", sans-serif;
+        }
+
+        .outer {
+            width: 45%;
+            border: 2px solid white;
+            border-radius: 10px;
+            background-color: #222222;
+        }
+
+        .inner {
+            margin: 2%;
+            background-color: #111111;
+            border: 2px solid white;
+            border-radius: 5px;
+
+        }
+
+        #left {
+            float: left;
+            margin-left: 2.5%;
+        }
+
+        #right {
+            float: right;
+            margin-right: 2.5%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Class Jukebox</h1>
+    <div id="left" class="outer">
+        <h2>Add a song below!</h5>
             <form id="submitSong">
                 <input list="songs" name="song" id="song">
                 <datalist id="songs">
-                    <option value="test1">
-                    <option value="helloworld">
-                    <option value="highwayToHell">
-                    <option value="song1">
-                    <option value="song2">
-                    <option value="song3">
-                    <option value="heehee">
+                    
                 </datalist>
-                <input type="submit" value="Add Song">
+                <input type="submit" value="Add Song" id="submit">
             </form>
-        </div>
-        <div id="right">
-            <h2>Queue</h2>
-            <ul>
-                <li>Song 1</li>
-                <li>Song 2</li>
-                <li>Song 3</li>
-                <li>Song 4</li>
-            </ul>
-        </div>
-    </body>
+    </div>
+    <div id="right" class="outer">
+        <h2>Queue</h2>
+        <ul id="queue">
+            <li>song1</li>
+            <li>song2</li>
+            <li>song3</li>
+        </ul>
+    </div>
+</body>
 
-    <script>
-        const form = document.getElementById("submitSong");
-        form.addEventListener("submit", function(event){
-            event.preventDefault();
-            var song = form.song.value;
-            form.song.value = "";
-            fetch("request", {
-                method: "POST",
-                body: song
-            })
+<script>
+    const form = document.getElementById("submitSong");
+    const song = document.getElementById("song");
+    const songs = document.getElementById("songs");
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var songName = song.value;
+        song.value = "";
+        list = document.getElementById("queue");
+        newItem = document.createElement("li");
+        newItem.appendChild(document.createTextNode(songName));
+        list.appendChild(newItem);
+        fetch("request", {
+            method: "POST",
+            body: songName
+        })
             .then(response => {
-                if(!response.ok){
+                if (!response.ok) {
                     throw new Error('HTTP ERROR');
                 }
                 return response.json();
             })
             .then(data => {
+                // do stuff
                 console.log(data);
             })
-        });
-    </script>
+    });
+    var songList = ["Careless Whisper", "505", "Flashing Lights", "Kiss of Life", "Love", "Don't", "Kill Bill", "It's A Wrap", "If I Ain't Got You", "Iris", "How to Save a Life", "Breakeven", "Stop And Stare", "Drinkin' Problem", "Neon Moon", "Tennessee Whiskey", "P.Y.T. (Pretty Young Thing)", "Isn't She Lovely", "Tunnel Vision", "Hotline Bling", "Topanga", "Sunday Morning"];
+
+    song.addEventListener("input", function (event) {
+        var text = song.value;
+        while(songs.firstChild){
+            songs.firstChild.remove();
+        } 
+        if(text != "") {
+            // get songs from server
+            for(var i = 0; i < songList.length; i++){
+                var option = document.createElement("option");
+                option.value = songList[i];
+                songs.appendChild(option);
+            }
+        }
+    });
+</script>
+
 </html>
