@@ -93,7 +93,7 @@
             <form id="submitSong">
                 <input list="songs" name="song" id="song">
                 <datalist id="songs">
-                    
+
                 </datalist>
                 <input type="submit" value="Add Song" id="submit">
             </form>
@@ -109,42 +109,89 @@
 </body>
 
 <script>
+
+    // get DOM objects
     const form = document.getElementById("submitSong");
     const song = document.getElementById("song");
     const songs = document.getElementById("songs");
+
+    // when user submits a song request
     form.addEventListener("submit", function (event) {
+
+        // don't reload page/create GET request
         event.preventDefault();
+
+        // get user input and reset textbox
         var songName = song.value;
         song.value = "";
+
+        /**
         list = document.getElementById("queue");
         newItem = document.createElement("li");
         newItem.appendChild(document.createTextNode(songName));
         list.appendChild(newItem);
+        **/
+
+        // send POST request to '/request' endpoint
         fetch("request", {
             method: "POST",
-            body: songName
+            body: JSON.stringify({ "song_name": songName })
         })
+
+            // throw error if server doesn't respond with good http code
             .then(response => {
                 if (!response.ok) {
                     throw new Error('HTTP ERROR');
                 }
                 return response.json();
             })
+
+            // otherwise, process response
             .then(data => {
+
                 // do stuff
                 console.log(data);
             })
     });
-    var songList = ["Careless Whisper", "505", "Flashing Lights", "Kiss of Life", "Love", "Don't", "Kill Bill", "It's A Wrap", "If I Ain't Got You", "Iris", "How to Save a Life", "Breakeven", "Stop And Stare", "Drinkin' Problem", "Neon Moon", "Tennessee Whiskey", "P.Y.T. (Pretty Young Thing)", "Isn't She Lovely", "Tunnel Vision", "Hotline Bling", "Topanga", "Sunday Morning"];
 
+    // when user changes the textbox
     song.addEventListener("input", function (event) {
+
+        // get text
         var text = song.value;
-        while(songs.firstChild){
+
+        // remove all elements from datalist (autofill)
+        while (songs.firstChild) {
             songs.firstChild.remove();
-        } 
-        if(text != "") {
-            // get songs from server
-            for(var i = 0; i < songList.length; i++){
+        }
+
+        // only update with new list if there is text in the textbox
+        if (text != "") {
+
+            // get list of songs from server
+            songList = [];
+            fetch("search", {
+                method: "POST",
+                body: JSON.stringify({ "song_search": text })
+            })
+
+                // throw error if server doesn't respond with good http code
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP ERROR');
+                    }
+                    return response.json();
+                })
+
+                // otherwise, process response
+                .then(data => {
+
+                    // do stuff
+                    console.log(data);
+                })
+
+            // update datalist (autofill) with list of songs
+            for (var i = 0; i < songList.length; i++) {
                 var option = document.createElement("option");
                 option.value = songList[i];
                 songs.appendChild(option);
