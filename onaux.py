@@ -24,7 +24,7 @@ import random
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="142b6b91ca9c4fff8492e3e562cfcc3d",
                                                client_secret="6093e73128bf48f9bbcab1288cc531c0",
                                                redirect_uri="http://localhost/8000",
-                                               scope="user-library-read,user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state"))
+                                               scope="user-library-read,user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state,user-modify-playback-state"))
 pprint(sp.me())
 #track_uri = "spotify:track:YOUR_TRACK_URI"
 #sp.add_to_queue(track_uri)
@@ -49,9 +49,42 @@ currently_playing_track_or_episode = users_queue['currently_playing']
 print(f"Currently playing: {currently_playing_track_or_episode['name']}")
 
 # resume from here
-add_to_queue("0CsT3gRGhXrMRUBxwgMFNk",device_id=None)
+#track_uri = 'spotify:track:6THqWFqcUAAB7At66622Wr'
+#sp.add_to_queue(track_uri)
+
 
 
 for track_or_episode in users_queue['queue']:
     print(f"Queued: {track_or_episode['name']}")
+
+sp.current_playback()
+devices = sp.devices()
+print(devices)
+
+def search_song():
+    print("what song?")
+    name = input()
+    result = sp.search(name)
+
+    # first thing to pop up 
+    print(result['tracks']['items'][1]['name'])
+    uri = result['tracks']['items'][1]['uri']
+    return uri
+    
+
+
+#def add_to_queue(uri):
+
+
+#def rem_from_queue(uri):
+
+
+# main
+#while(true):
+    # read in inputs
+
+    #If input === 
+uri_song = search_song()
+print(uri_song)
+sp.add_to_queue(uri_song, None)
 
