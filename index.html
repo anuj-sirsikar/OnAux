@@ -133,9 +133,12 @@
         **/
 
         // send POST request to '/request' endpoint
-        fetch("/request/", {
+        fetch("/request", {
             method: "POST",
-            body: JSON.stringify({ "song_name": songName })
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "text": songName })
         })
 
             // throw error if server doesn't respond with good http code
@@ -175,7 +178,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ "song_name": text })
+                body: JSON.stringify({ "text": text })
             })
 
                 // throw error if server doesn't respond with good http code
