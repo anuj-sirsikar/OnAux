@@ -33,6 +33,7 @@ async def store_song(body: Text):
 @app.post("/search")
 async def search_song(body: Text):
     text = body.dict()['text']
+    
     return {"message": "/search WORKED!"}
 
 # define main method to run server
