@@ -4,6 +4,12 @@ import uvicorn
 import socket
 from pydantic import BaseModel
 
+import spotipy 
+from spotipy.oauth2 import SpotifyOAuth
+import spotipy.util as util
+from pprint import pprint
+import random
+
 # create app
 app = FastAPI()
 
@@ -33,6 +39,14 @@ async def search_song(body: Text):
 if __name__ == "__main__":
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
+    # connected to Anuj's spotify account now 
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="142b6b91ca9c4fff8492e3e562cfcc3d",
+                                               client_secret="6093e73128bf48f9bbcab1288cc531c0",
+                                               redirect_uri="http://localhost/8000",
+                                               scope="user-library-read,user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state,user-modify-playback-state"))
+    
+    pprint(sp.me())
     uvicorn.run(app, host=ip_address, port=8080)
+    
 
 
