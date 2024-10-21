@@ -25,41 +25,24 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="142b6b91ca9c4fff8492e3
                                                client_secret="6093e73128bf48f9bbcab1288cc531c0",
                                                redirect_uri="http://localhost/8000",
                                                scope="user-library-read,user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state,user-modify-playback-state"))
-pprint(sp.me())
+print(sp.me()['uri'])
 #track_uri = "spotify:track:YOUR_TRACK_URI"
 #sp.add_to_queue(track_uri)
 #sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
-'''
-scope = 'user-library-read'
-def show_tracks(results):
-    for item in results['items']:
-        track = item['track']
-        print("%32.32s %s" % (track['artists'][0]['name'], track['name']))
 
-results = sp.current_user_saved_tracks()
-show_tracks(results)
-
-while results['next']:
-    results = sp.next(results)
-    show_tracks(results)
-    '''
 users_queue = sp.queue()
 
 currently_playing_track_or_episode = users_queue['currently_playing']
-print(f"Currently playing: {currently_playing_track_or_episode['name']}")
-
-# resume from here
-#track_uri = 'spotify:track:6THqWFqcUAAB7At66622Wr'
-#sp.add_to_queue(track_uri)
-
+if not currently_playing_track_or_episode == None:
+    print(f"Currently playing: {currently_playing_track_or_episode['name']}")
 
 
 for track_or_episode in users_queue['queue']:
     print(f"Queued: {track_or_episode['name']}")
 
-sp.current_playback()
-devices = sp.devices()
-print(devices)
+#sp.current_playback()
+#devices = sp.devices()
+#print(devices)
 
 def search_song():
     print("what song?")
@@ -67,9 +50,25 @@ def search_song():
     result = sp.search(name)
 
     # first thing to pop up 
-    print(result['tracks']['items'][1]['name'])
-    uri = result['tracks']['items'][1]['uri']
+    # return top 10 songs when 
+    print(result['tracks'])
+    print(result['tracks']['items'][0]['name'])
+    uri = result['tracks']['items'][0]['uri']
     return uri
+
+# returns top 10 songs after a search
+def search_list():
+    name = input()
+    result = sp.search(name)
+    song_list = []
+    # maybe a dictionary with name
+    #print(result['tracks']['items'][4]['name'])
+    for i in range(0,10):
+        song_list.append(result['tracks']['items'][i]['name'] + " by ")
+    print(song_list)
+    
+
+
     
 
 
@@ -87,4 +86,8 @@ def search_song():
 uri_song = search_song()
 print(uri_song)
 sp.add_to_queue(uri_song, None)
+
+#search_list()
+
+#sp.me()['uri'] = '' # did not do anything 
 
