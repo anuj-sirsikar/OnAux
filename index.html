@@ -177,10 +177,6 @@
         // get text
         var text = song.value;
 
-        // remove all elements from datalist (autofill)
-        while (songs.firstChild)
-            songs.firstChild.remove();
-
         // only update with new list if there is text in the textbox
         if (text != "") {
 
@@ -203,6 +199,10 @@
 
                 // otherwise, process response
                 .then(data => {
+
+                    // remove all elements from datalist (autofill)
+                    while (songs.firstChild)
+                        songs.firstChild.remove();
 
                     // update datalist (autofill) with list of songs
                     for (var i = 0; i < data.songs.length; i++) {

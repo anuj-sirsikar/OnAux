@@ -26,30 +26,54 @@ async def home():
 # define request endpoint (user requesting to add song to queue)
 @app.post("/request")
 async def store_song(body: Text):
-    song = body.dict()['text']
-    users_queue = sp.queue()
-    result = sp.search(song)
-    uri = result['tracks']['items'][1]['uri']
-    sp.add_to_queue(uri, None)
-    return {"message": "/request WORKED!"}
+    try:
+
+        # retrieve the song name
+        song = body.model_dump()['text']
+
+        # make sure user actually has text
+        if song == "":
+            raise Exception("No text!")
+
+        # add song to queue
+        sp.add_to_queue(sp.search(song)['tracks']['items'][1]['uri'], None)
+
+        # retrieve queue and return it to user
+        queue = [x['name'] for x in sp.queue()['queue']]
+        queue.insert(0, sp.queue()['currently_playing']['name'])
+        return {"message": "OK", "queue": queue}
+    
+    # return error message if something went wrong
+    except Exception as error:
+        print(error)
+        return {"message": "NOT OK"}
 
 # define search endpoint (user searching for song)
 @app.post("/search")
 async def search_song(body: Text):
-    text = body.dict()['text']
-    
-    return {"message": "/search WORKED!"}
+    try:
+
+        # get current text in user search box
+        text = body.model_dump()['text']
+
+        # return search of spotify
+        songs = [x['name'] for x in sp.search(text, None)['tracks']['items'][:10]]
+        print(songs)
+        return {"message": "OK", "songs": songs}
+    except Exception as error:
+        print(error)
+        return {"message": "NOT OK"}
 
 # define main method to run server
 if __name__ == "__main__":
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
     # connected to Anuj's spotify account now 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="142b6b91ca9c4fff8492e3e562cfcc3d",
-                                               client_secret="6093e73128bf48f9bbcab1288cc531c0",
-                                               redirect_uri="http://localhost/8000",
-                                               scope="user-library-read,user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state,user-modify-playback-state"))
-    
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="02044de1754544a993a1e1f8dcefad93",
+                                               client_secret="48bc19fb38e1452cb7c90b9a40eb9464",
+                                               redirect_uri="http://localhost:9000",
+                                               scope="user-library-read,user-read-recently-played,user-read-currently-playing,user-read-playback-state,user-modify-playback-state"))
+    print("HERE")
     pprint(sp.me())
     uvicorn.run(app, host=ip_address, port=8080)
     
