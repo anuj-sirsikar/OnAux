@@ -27,6 +27,10 @@ async def home():
 @app.post("/request")
 async def store_song(body: Text):
     song = body.dict()['text']
+    users_queue = sp.queue()
+    result = sp.search(song)
+    uri = result['tracks']['items'][1]['uri']
+    sp.add_to_queue(uri, None)
     return {"message": "/request WORKED!"}
 
 # define search endpoint (user searching for song)
