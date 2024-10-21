@@ -2,49 +2,62 @@ import subprocess
 import requests
 import time
 import socket
+import pytest
+import json
 
 
-# test root to ensure a good HTTP response and correct HTML page
-def test_root_endpoint():
 
-    # Start a server process we can test
+# fixture to last throughout all tests
+@pytest.fixture(scope="module")
+def server():
+
+    # Start the server and give some time for it to spin up
     process = subprocess.Popen(["python", "server.py", "8080"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # The server might take a second to start
     time.sleep(1)
+
+    # wait until all tests are done, then terminate server
+    yield process
+    process.terminate()
+    process.wait()
+
+
+
+# test to make sure root endpoint serves html page
+def test_root_endpoint(server):
     
-    try:
-        hostname = socket.gethostname()
-        ip_address = socket.gethostbyname(hostname)
-        response = requests.get("http://" + ip_address + ":8080/")
-        
-        # The assert command throws an error if a False value is passed to it.
-        assert response.status_code == 200
-        print(response.content)
+    # get root endpoint
+    response = requests.get("http://" + socket.gethostbyname(socket.gethostname()) + ":8080/")
 
-    # Terminate the server process after the test
-    finally:
-        process.terminate()
+    # check the status code is 200 (OK)
+    assert response.status_code == 200
 
-# test request endpoint to ensure a POST request is handled and a response is generated
-def test_request_endpoint():
+    # check if response is correct html page (checking title)
+    assert "<title>Class Jukebox</title>" in response.text
 
-    # Start a server process we can test
-    process = subprocess.Popen(["python", "server.py", "8080"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+# test that request endpoint processes POST request and responds with good response
+def test_request_endpoint(server):
+
+    # send POST request to 'request' endpoint
+    response = requests.post("http://" + socket.gethostbyname(socket.gethostname()) + ":8080/request", json={'text':'test'})
     
-    # The server might take a second to start
-    time.sleep(1)
+    # check that the response code is good
+    assert response.status_code == 200
+
+    # check that the response is expected JSON object
+    assert 'message' in json.loads(response.text)
+
+
+
+# test that search endpoint processes POST request and responds with good response
+def test_search_endpoint(server):
+
+    # send POST request to 'search' endpoint
+    response = requests.post("http://" + socket.gethostbyname(socket.gethostname()) + ":8080/search", json={'text':'test'})
     
-    try:
-        hostname = socket.gethostname()
-        ip_address = socket.gethostbyname(hostname)
-        myobj = {'text' : 'test'}
-        response = requests.post("http://" + ip_address + ":8080/request/", json=myobj)
+    # check that the response code is good
+    assert response.status_code == 200
 
-        # The assert command throws an error if a False value is passed to it.
-        print(response.text)
-        assert response.status_code == 200
-
-    # Terminate the server process after the test
-    finally:
-        process.terminate()
+    # check that the response is expected JSON object
+    assert 'message' in json.loads(response.text)
