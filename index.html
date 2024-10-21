@@ -129,13 +129,6 @@
         var songName = song.value;
         song.value = "";
 
-        /**
-        list = document.getElementById("queue");
-        newItem = document.createElement("li");
-        newItem.appendChild(document.createTextNode(songName));
-        list.appendChild(newItem);
-        **/
-
         // send POST request to '/request' endpoint
         fetch("/request", {
             method: "POST",
